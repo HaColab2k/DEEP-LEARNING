@@ -96,5 +96,64 @@ tf.reduce_sum(X)
 ```
 ![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/924e6576-7506-4e1e-8883-640d26a0f93a)
 
+## Broadcasting
+Broadcasting works according to the following two-step procedure: (i) expand one or both arrays by copying elements along axes with length 1 so that after this transformation, the two tensors have the same shape; (ii) perform an elementwise operation on the resulting arrays.
+```Python
+a = tf.reshape(tf.range(3), (3, 1))
+b = tf.reshape(tf.range(2), (1, 2))
+a, b
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/81a35b39-80a2-4fd5-89a1-0ccc7c620bcb)
+Since a and b are 3x1 and 1x2 matrices, respectively, their shapes do not match up. Broadcasting produces a larger 3x2 matrix by replicating matrix a along the columns and matrix b along the rows before adding them elementwise.
+```Python
+a + b
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/32a657b2-1839-42a8-a0f5-266fb2f6ee49)
+## Saving Memory
+Running operations can cause new memory to be allocated to host results. For example, if we write Y = X + Y, we dereference the tensor that Y used to point to and instead point Y at the newly allocated memory. We can demonstrate this issue with Python’s id() function, which gives us the exact address of the referenced object in memory. Note that after we run Y = Y + X, id(Y) points to a different location. That is because Python first evaluates Y + X, allocating new memory for the result and then points Y to this new location in memory.
+```Python
+before = id(Y)
+Y = Y + X
+id(Y) == before
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/2323e584-5b41-464a-b28e-532468c2af20)
+This might be undesirable for two reasons. First, we do not want to run around allocating memory unnecessarily all the time. In machine learning, we often have hundreds of megabytes of parameters and update all of them multiple times per second. Whenever possible, we want to perform these updates in place. Second, we might point at the same parameters from multiple variables. If we do not update in place, we must be careful to update all of these references, lest we spring a memory leak or inadvertently refer to stale parameters.
+```Python
+Z = tf.Variable(tf.zeros_like(Y))
+print('id(Z):', id(Z))
+Z.assign(X + Y)
+print('id(Z):', id(Z))
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/c44dfc28-e4a0-4c36-b67e-2a41b1093484)
+Even once you store state persistently in a Variable, you may want to reduce your memory usage further by avoiding excess allocations for tensors that are not your model parameters. Because TensorFlow Tensors are immutable and gradients do not flow through Variable assignments, TensorFlow does not provide an explicit way to run an individual operation in-place.
 
+However, TensorFlow provides the tf.function decorator to wrap computation inside of a TensorFlow graph that gets compiled and optimized before running. This allows TensorFlow to prune unused values, and to reuse prior allocations that are no longer needed. This minimizes the memory overhead of TensorFlow computations.
+```Python
+@tf.function
+def computation(X, Y):
+    Z = tf.zeros_like(Y)  # This unused value will be pruned out
+    A = X + Y  # Allocations will be reused when no longer needed
+    B = A + Y
+    C = B + Y
+    return C + Y
+
+computation(X, Y)
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/cf4a0ebb-15ce-4436-9074-64f03eca1fdc)
+## Conversion to Other Python Objects
+Converting to a NumPy tensor (ndarray), or vice versa, is easy. The converted result does not share memory. This minor inconvenience is actually quite important: when you perform operations on the CPU or on GPUs, you do not want to halt computation, waiting to see whether the NumPy package of Python might want to be doing something else with the same chunk of memory.
+```Python
+A = X.numpy()
+B = tf.constant(A)
+type(A), type(B)
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/f861f0d0-f8b5-4924-a5bf-98ca3709710a)
+To convert a size-1 tensor to a Python scalar, we can invoke the item function or Python’s built-in functions.
+```Python
+a = tf.constant([3.5]).numpy()
+a, a.item(), float(a), int(a)
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/5560e569-5587-4acc-9eaa-51cc166d5cc5)
+## Summary
+The tensor class is the main interface for storing and manipulating data in deep learning libraries. Tensors provide a variety of functionalities including construction routines; indexing and slicing; basic mathematics operations; broadcasting; memory-efficient assignment; and conversion to and from other Python objects.
 
