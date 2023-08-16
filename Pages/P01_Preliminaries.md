@@ -1,6 +1,6 @@
 ﻿# 1. Preliminaries
 # Table of contents
-- 1.1. [Data Manipulation](./DataManiputation.md)
+- 1.1. [Data Manipulation](./DataManipulation.md)
 - 1.2. [Data Preprocessing]()
 - 1.3. [Linear Algebra]()
 - 1.4. [Calculus]()
