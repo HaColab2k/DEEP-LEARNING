@@ -1,4 +1,4 @@
-﻿# Linear Algebra
+﻿# 1.3 Linear Algebra
 ## Scalars
 ![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/35645911-0416-45fb-947c-e7852bca6057)
 ```Python
