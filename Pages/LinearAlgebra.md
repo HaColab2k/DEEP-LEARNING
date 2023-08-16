@@ -158,3 +158,50 @@ tf.reduce_sum(x * y)
 ```
 ![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/8151059e-7eda-4514-a714-a4916cb09b6e)
 ![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/06712dc1-148c-4a51-b2b3-2375043d1645)
+## Matrix–Vector Products
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/6d074288-7f83-4b0c-845b-207e3b2acb3c)
+To express a matrix–vector product in code, we use the matvec function. Note that the column dimension of A (its length along axis 1) must be the same as the dimension of x (its length).
+```Python
+A.shape, x.shape, tf.linalg.matvec(A, x)
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/9eb8329d-f500-4ada-b9c3-c58c4bd80e0f)
+## Matrix–Matrix Multiplication
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/6ff37033-daad-4731-a907-c5387ffbd11d)
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/0da4e651-7a2d-41e8-8dfc-a74e7e9f8438)
+```Python
+B = tf.ones((3, 4), tf.float32)
+tf.matmul(A, B)
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/c50c1c83-08fb-4158-a950-ca8fd844d123)
+The term matrix–matrix multiplication is often simplified to matrix multiplication, and should not be confused with the Hadamard product.
+## Norms
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/b0992063-763e-4d0d-a84d-1a53b30c7d77)
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/fd769497-81d2-4108-bf03-35b0385f2d86)
+
+```Python
+u = tf.constant([3.0, -4.0])
+tf.norm(u)
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/4523648d-ab6f-41cd-84db-e9611d9a9d42)
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/a2b408c4-0cb9-4cbe-a6ec-7d4e64b0df8f)
+```Python
+tf.norm(tf.ones((4, 9)))
+```
+![image](https://github.com/HaColab2k/DEEP-LEARNING/assets/127838132/13f47bdd-936d-4aa7-948c-9e366b37837f)
+While we do not want to get too far ahead of ourselves, we already can plant some intuition about why these concepts are useful. In deep learning, we are often trying to solve optimization problems: maximize the probability assigned to observed data; maximize the revenue associated with a recommender model; minimize the distance between predictions and the ground-truth observations; minimize the distance between representations of photos of the same person while maximizing the distance between representations of photos of different people. These distances, which constitute the objectives of deep learning algorithms, are often expressed as norms.
+
+To recap:
+
+Scalars, vectors, matrices, and tensors are the basic mathematical objects used in linear algebra and have zero, one, two, and an arbitrary number of axes, respectively.
+
+Tensors can be sliced or reduced along specified axes via indexing, or operations such as sum and mean, respectively.
+
+Elementwise products are called Hadamard products. By contrast, dot products, matrix–vector products, and matrix–matrix products are not elementwise operations and in general return objects having shapes that are different from the the operands.
+
+Compared to Hadamard products, matrix–matrix products take considerably longer to compute (cubic rather than quadratic time).
+
+Norms capture various notions of the magnitude of a vector (or matrix), and are commonly applied to the difference of two vectors to measure their distance apart.
+
+Common vector norms include the 
+ and 
+ norms, and common matrix norms include the spectral and Frobenius norms.
